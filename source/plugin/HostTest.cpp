@@ -198,6 +198,7 @@ int main(int argc, char** argv)
     int rc = 0;
     if (mode == "state") {
         inst->prepareToPlay(rate, block);
+        std::cerr << "latency " << inst->getLatencySamples() << " samples at " << rate << " Hz\n";
         juce::AudioBuffer<float> tmp(2, int(32 * rate)); int mo = 0;
         tmp.clear();
         g_smf.emplace_back(int(3 * rate), juce::MidiMessage::programChange(1, 8));
