@@ -37,7 +37,7 @@ This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) plus the following merged 
   firmware reads it and sends its own CCs as on the unit; the plugin never makes MIDI from a parameter, and nothing
   the machine does moves a parameter (the pots are not motorised) - so automation and MIDI CC tracks never fight.
   Mouse moves on the panel are recorded in Write/Touch mode.
-- **MS2000 Flash Tool** (Windows, in the release zip): reads the complete 1 MB flash of your own MS2000 / MS2000R over
+- **MS2000 Flash Tool** (Windows, in the upstream release zip): reads the complete 1 MB flash of your own MS2000 / MS2000R over
   MIDI - the `flash.bin` this emulator needs - with unknown-technologies' flash dump, installed through the unit's own
   update mode from KORG's v1.07 updater file. **Never with an MS2000B / MS2000BR.** See
   [source/tools/flashdump/README.md](source/tools/flashdump/README.md) and [docs/ipl_protocol.md](docs/ipl_protocol.md).
@@ -63,11 +63,13 @@ Next: a preset library page.
 
 ## Download
 
-Windows builds are on the [Releases](../../releases) page: `ms2000_emulator.exe` with its two launchers and the
-`MS2000R.vst3` plugin. Put your ROM files (below) beside the exe, or in a folder above it, and start
-`MS2000R.bat` (or `MS2000R (log).bat` to get `ms2000_gui.log` for a bug report). Copy `MS2000R.vst3` to your
-VST3 folder (usually `C:\Program Files\Common Files\VST3`); on its first start open Settings -> "Choose the
-MS2000 folder..." and pick the folder with the ROMs (remembered in `%APPDATA%\MS2000R\home.txt`). The Microsoft Visual C++ 2015-2022 x64 runtime is needed.
+This fork's [Releases](../../releases) ship the **VST3 plugin bundle** (`MS2000R-v<version>-win64.zip`). Unzip it,
+copy the `MS2000R.vst3` folder into your VST3 directory (usually `C:\Program Files\Common Files\VST3`), and on its
+first start open Settings -> "Choose the MS2000 folder..." and pick the folder with the ROMs (remembered in
+`%APPDATA%\MS2000R\home.txt`). The Microsoft Visual C++ 2015-2022 x64 runtime is needed.
+
+The **standalone application** is not shipped in this fork's releases — build it from source (see Build below), or
+grab the official Windows/macOS builds from upstream [`Tuth/ms2000r-emu`](https://github.com/Tuth/ms2000r-emu).
 
 ## What you need - NOT included
 
@@ -84,7 +86,6 @@ machine's memory and `recordings\` are kept there.
 | `hd44780_a00.bin` | the LCD controller's character generator ROM (4096 bytes), beside `flash.bin` or in `full FW` | no (the LCD falls back to text) |
 
 If something is missing, the console / the plugin's panel names the missing file and the folder it looked in.
-The release zip has a `ROMS - READ ME.txt` with the same instructions.
 
 The emulator never writes `flash.bin`: what the firmware writes (WRITE) goes to `ms2000_flash_state.bin` /
 `.sectors` beside it (standalone) or into the host project (plugin).
