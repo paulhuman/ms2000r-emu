@@ -59,9 +59,16 @@ jobs:
         shell: pwsh
         run: |
           $src = 'build/VST3_multi/MS2000R.vst3'
+          if (-not (Test-Path $src)) { throw "bundle missing: $src" }
           $zip = "dist/${{ steps.meta.outputs.asset_name }}"
           New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path $src -DestinationPath $zip
+          # Stage the bundle inside a correctly named folder so the archive unzips
+          # straight into a proper "MS2000R.vst3/" bundle (deterministic root).
+          $stage = 'dist/_bundle'
+          Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item -Recurse $src (Join-Path $stage 'MS2000R.vst3')
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip
+          Remove-Item $stage -Recurse -Force
           Get-Item $zip | Select-Object FullName, Length
 
       - name: Upload package
