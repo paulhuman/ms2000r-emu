@@ -14,6 +14,7 @@ jobs:
       version_tag: ${{ steps.meta.outputs.version_tag }}
       asset_name: ${{ steps.meta.outputs.asset_name }}
       suffix: ${{ steps.meta.outputs.suffix }}
+      base: ${{ steps.meta.outputs.base }}
     steps:
       - uses: actions/checkout@v7
 
@@ -35,6 +36,7 @@ jobs:
           "version_tag=$tag"     | Out-File $env:GITHUB_OUTPUT -Append
           "suffix=$suffix"       | Out-File $env:GITHUB_OUTPUT -Append
           "asset_name=MS2000R-$tag-win64.zip" | Out-File $env:GITHUB_OUTPUT -Append
+          "base=$base"           | Out-File $env:GITHUB_OUTPUT -Append
 
       - name: Configure (VS2022, VST3, fork version suffix)
         run: cmake -S . -B build -DMS2K_BUILD_VST3=ON -DCMAKE_BUILD_TYPE=Release "-DMS2K_VERSION_SUFFIX=${{ steps.meta.outputs.suffix }}"
@@ -84,6 +86,36 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create curated release notes
+        shell: bash
+        run: |
+          base='${{ needs.build-windows.outputs.base }}'
+          suffix='${{ needs.build-windows.outputs.suffix }}'
+          tag='${{ needs.build-windows.outputs.version_tag }}'
+          ver="${tag#v}"
+          prev=$(git describe --tags --abbrev=0 --match 'v*' HEAD^ 2>/dev/null || echo "v${base}")
+          changes=$(git log --oneline --merges "${prev}..HEAD" | sed 's/^/- /')
+          [ -n "$changes" ] || changes='- (no merge commits listed)'
+          {
+            echo "# MS2000R ${ver}"
+            echo
+            echo "Fork build on top of upstream v${base}. Released $(date +%F)."
+            echo
+            echo "## Changes vs upstream v${base}"
+            echo
+            echo "$changes"
+            echo
+            echo "## Fork conventions"
+            echo
+            echo '- Version suffix `-paulhuman.<n>` marks fork builds.'
+            echo '- The VST3 bundle ships as `MS2000R.vst3/`, so it drops straight into your VST3 directory.'
+            echo '- Built and packaged automatically by GitHub Actions.'
+          } > release-notes.md
+
       - uses: actions/download-artifact@v8
         with:
           name: vst3-win64
@@ -94,4 +126,4 @@ jobs:
         with:
           tag_name: ${{ needs.build-windows.outputs.version_tag }}
           files: dist/*.zip
-          generate_release_notes: true
+          body_path: release-notes.md
