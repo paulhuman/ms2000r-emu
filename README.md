@@ -7,6 +7,18 @@ comes from the machine's own code.
 
 Standalone application (Windows and macOS, ImGui) with the full MS2000R front panel, and a VST3 instrument plugin (JUCE; on macOS also an Audio Unit).
 
+## Changes in this fork
+
+This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) plus the following merged changes (all also available as upstream PRs):
+
+- **Plugin state recall in host projects** (upstream PR #8): the project now saves and restores the live edit buffer and its
+  program slot, the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys, so a DAW session recalls the
+  audible program as on the hardware unit.
+- **Editor window keeps the panel's aspect ratio** (upstream PR #11): resizing the editor preserves the panel's proportions
+  (700×380 … 3840×2160) instead of distorting it.
+- **Report the synth's latency to the host** (upstream PR #12): an optional `Report latency to host` setting in the plugin's
+  Settings page reports the ~21 ms firmware latency (host sample-accurate delay compensation).
+
 ## Status
 
 - The firmware boots and runs: programs, the vocoder, the arpeggiator, the motion/mod sequencer, the demo songs,
