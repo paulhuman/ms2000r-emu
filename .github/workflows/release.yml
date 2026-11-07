@@ -94,27 +94,12 @@ jobs:
         shell: bash
         run: |
           base='${{ needs.build-windows.outputs.base }}'
-          suffix='${{ needs.build-windows.outputs.suffix }}'
           tag='${{ needs.build-windows.outputs.version_tag }}'
           ver="${tag#v}"
-          prev=$(git describe --tags --abbrev=0 --match 'v*' HEAD^ 2>/dev/null || echo "v${base}")
-          changes=$(git log --oneline --merges "${prev}..HEAD" | sed 's/^/- /')
-          [ -n "$changes" ] || changes='- (no merge commits listed)'
-          {
-            echo "# MS2000R ${ver}"
-            echo
-            echo "Fork build on top of upstream v${base}. Released $(date +%F)."
-            echo
-            echo "## Changes vs upstream v${base}"
-            echo
-            echo "$changes"
-            echo
-            echo "## Fork conventions"
-            echo
-            echo '- Version suffix `-paulhuman.<n>` marks fork builds.'
-            echo '- The VST3 bundle ships as `MS2000R.vst3/`, so it drops straight into your VST3 directory.'
-            echo '- Built and packaged automatically by GitHub Actions.'
-          } > release-notes.md
+          sed -e "s/__VER__/${ver}/g" \
+              -e "s/__BASE__/${base}/g" \
+              -e "s/__DATE__/$(date +%F)/g" \
+              .github/workflows/release-notes.template.md > release-notes.md
 
       - uses: actions/download-artifact@v8
         with:
