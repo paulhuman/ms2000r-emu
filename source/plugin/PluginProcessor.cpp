@@ -1189,7 +1189,7 @@ void Ms2kProcessor::setStateInformation(const void* data, int size)
     editorW = int(t.getProperty("editorW", 0)); editorTab = int(t.getProperty("editorTab", 0));
     hostClock = bool(t.getProperty("hostClock", true));
     transportMsgs = bool(t.getProperty("transportMsgs", true));
-    knobFollow = bool(t.getProperty("knobFollow", false));
+    knobFollow = bool(t.getProperty("knobFollow", true));
     dspThread = bool(t.getProperty("dspThread", false));
     sysexOut = bool(t.getProperty("sysexOut", sysexOut.load()));
     powerSwitch = bool(t.getProperty("powerSwitch", powerSwitch.load()));
