@@ -15,7 +15,7 @@ jobs:
       asset_name: ${{ steps.meta.outputs.asset_name }}
       suffix: ${{ steps.meta.outputs.suffix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Derive the release version from the tag, e.g. "v0.9.8-paulhuman.1":
       #   base   = numeric CMake project version (0.9.8)
@@ -65,7 +65,7 @@ jobs:
           Get-Item $zip | Select-Object FullName, Length
 
       - name: Upload package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vst3-win64
           path: dist/*.zip
@@ -77,7 +77,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: vst3-win64
           path: dist

@@ -12,7 +12,7 @@ jobs:
     name: Build VST3 (Windows x64)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure (VS2022, VST3)
         run: cmake -S . -B build -DMS2K_BUILD_VST3=ON -DCMAKE_BUILD_TYPE=Release
@@ -21,7 +21,7 @@ jobs:
         run: cmake --build build --config Release --target MS2000R_Shim MS2000R_HostTest --parallel
 
       - name: Upload VST3 bundle (debugging)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vst3-win64-ci
           path: build/VST3_multi/MS2000R.vst3
