@@ -1,51 +1,53 @@
 # Русский
 
-Форк-сборка эмулятора Korg MS2000R поверх апстрима v__BASE__. Выпущено __DATE__.
+Форк эмулятора Korg MS2000R на основе upstream-версии v__BASE__.
 
-> **Внимание:** эта версия — **только для Windows (x64)**.
+> **Внимание:** сборка предназначена только для Windows (x64). Версия для macOS (AU) не входит в этот релиз.
 
-**Апстрим-версия:** [Tuth/ms2000r-emu v__BASE__](https://github.com/Tuth/ms2000r-emu).
+**Upstream:** [Tuth/ms2000r-emu v__BASE__](https://github.com/Tuth/ms2000r-emu).
 
-## Изменения относительно апстрима v__BASE__
+## Изменения относительно upstream v__BASE__
 
-- **Сохранение состояния плагина исправлено** — пресеты теперь надёжно сохраняются и восстанавливаются в проекте DAW (PR #8).
-- **Исправлены пропорции окна редактора** — панель сохраняет правильное соотношение сторон в рамках мин/макс размеров (PR #11).
-- **Добавлена опция `Report latency to host`** в настройках — хост получает корректную задержку плагина (PR #12).
+- **Исправлено сохранение состояния плагина** — состояние плагина корректно сохраняется и восстанавливается при работе с проектами DAW (PR #8).
+- **Исправлено соотношение сторон окна редактора** — окно сохраняет правильные пропорции при изменении размеров (PR #11).
+- **Добавлена настройка `Report latency to host`** — позволяет управлять передачей информации о задержке плагина хосту (PR #12).
 
 ## Соглашения форка
 
-- Суффикс версии `-paulhuman.<n>` отличает форк-сборки (например, `v0.9.8-paulhuman.1`).
-- Бандл VST3 поставляется как папка `MS2000R.vst3/` — её можно положить прямо в каталог VST3.
-- Сборка и упаковка выполняются автоматически через GitHub Actions.
+- Для обозначения собственных сборок используется суффикс версии `-paulhuman.<n>` (например, `v__BASE__-paulhuman.1`).
+- VST3 bundle поставляется в виде каталога `MS2000R.vst3/`.
+- Сборка и упаковка выполняются автоматически с помощью GitHub Actions.
 
 ## Установка
 
-- Распакуйте архив `MS2000R-v__VER__-win64.zip` и скопируйте папку `MS2000R.vst3` в каталог VST3 вашего хоста (например, `C:\Program Files\Common Files\VST3`).
-- Убедитесь, что у вас есть необходимые ROMs/прошивки (см. README).
+1. Распакуйте архив `MS2000R-v__VER__-win64.zip`.
+2. Скопируйте каталог `MS2000R.vst3` в каталог VST3 вашего хоста (например, `C:\Program Files\Common Files\VST3`).
+3. Убедитесь, что доступны необходимые ROM-файлы и прошивки (см. README исходного проекта).
 
 ---
 
 # English
 
-Fork build of the Korg MS2000R emulator on top of upstream v__BASE__. Released __DATE__.
+Fork of the Korg MS2000R emulator based on upstream version v__BASE__.
 
-> **Note:** this build is **Windows-only (x64)**.
+> **Note:** this build is intended for Windows (x64) only. A macOS (AU) version is not part of this release.
 
-**Upstream version:** [Tuth/ms2000r-emu v__BASE__](https://github.com/Tuth/ms2000r-emu).
+**Upstream:** [Tuth/ms2000r-emu v__BASE__](https://github.com/Tuth/ms2000r-emu).
 
 ## Changes vs upstream v__BASE__
 
-- **Plugin state recall fixed** — presets now save and restore reliably in the DAW project (PR #8).
-- **Editor window proportions fixed** — the panel keeps the correct aspect ratio within min/max bounds (PR #11).
-- **Added `Report latency to host` option** in settings — the host now receives the plugin's correct latency (PR #12).
+- **Plugin state saving fixed** — plugin state now saves and restores correctly when working with DAW projects (PR #8).
+- **Editor window aspect ratio fixed** — the window keeps correct proportions when resized (PR #11).
+- **Added `Report latency to host` setting** — controls whether latency information is reported to the host (PR #12).
 
 ## Fork conventions
 
-- A `-paulhuman.<n>` version suffix marks fork builds (e.g. `v0.9.8-paulhuman.1`).
-- The VST3 bundle ships as an `MS2000R.vst3/` folder — drop it straight into your VST3 directory.
+- Own builds are marked with a `-paulhuman.<n>` version suffix (e.g. `v__BASE__-paulhuman.1`).
+- The VST3 bundle ships as a `MS2000R.vst3/` directory.
 - Builds and packaging are automated via GitHub Actions.
 
 ## Installation
 
-- Unzip `MS2000R-v__VER__-win64.zip` and copy the `MS2000R.vst3` folder into your host's VST3 directory (e.g. `C:\Program Files\Common Files\VST3`).
-- Make sure you have the required ROMs/firmware (see README).
+1. Unzip `MS2000R-v__VER__-win64.zip`.
+2. Copy the `MS2000R.vst3` directory into your host's VST3 directory (e.g. `C:\Program Files\Common Files\VST3`).
+3. Make sure the required ROM files and firmware are available (see the upstream project's README).
