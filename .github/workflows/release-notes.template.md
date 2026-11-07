@@ -8,8 +8,7 @@
 
 ## Изменения с версии …
 
-<!-- TODO: заполнить список изменений этого релиза (дельта от предыдущего).
-     Желательно две секции: «Для пользователей» и «Для разработчиков». -->
+_Список изменений будет заполнен перед публикацией релиза._
 
 ## Соглашения форка
 
@@ -35,8 +34,7 @@ Fork of the Korg MS2000R emulator based on upstream version v__BASE__.
 
 ## Changes since …
 
-<!-- TODO: fill in the changes of this release (delta from the previous one).
-     Prefer two sections: "For users" and "For developers". -->
+_The list of changes will be filled in before the release is published._
 
 ## Fork conventions
 
