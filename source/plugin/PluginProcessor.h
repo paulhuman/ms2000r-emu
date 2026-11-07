@@ -55,6 +55,8 @@ public:
     std::atomic<bool> hostClock{ true };                 // MIDI-CLOCK: the host tempo as F8 clocks into MIDI IN
     std::atomic<bool> dspThread{ false };                // DSP-THREAD: the DSP on a second core (from the next start)
     std::atomic<bool> knobFollow{ true };                // KNOB-FOLLOW: the pots show the program (off = where you left them)
+                                                         // default ON on purpose: showing the preset is friendlier than hardware-style
+                                                         // "you left it" positions; users can turn it off in Settings.
     std::atomic<bool> sysexOut{ true };                  // VSTHOST-SYSEX-1: hand the firmware's SysEx OUT to the host
     std::atomic<bool> powerSwitch{ true };               // PWR-SW-1: the Master VR's switch - POWER off at the minimum
     std::atomic<bool> latencyReport{ true };             // Settings: report the synth's latency to the host
