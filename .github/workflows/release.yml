@@ -1,0 +1,90 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build & package VST3 (Windows x64)
+    runs-on: windows-latest
+    outputs:
+      version_tag: ${{ steps.meta.outputs.version_tag }}
+      asset_name: ${{ steps.meta.outputs.asset_name }}
+      suffix: ${{ steps.meta.outputs.suffix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Derive the release version from the tag, e.g. "v0.9.8-paulhuman.1":
+      #   base   = numeric CMake project version (0.9.8)
+      #   suffix = the part after the base ("-paulhuman.1") -> MS2K_VERSION_SUFFIX
+      #   asset  = MS2000R-v0.9.8-paulhuman.1-win64.zip
+      - name: Resolve version/suffix from tag
+        id: meta
+        shell: pwsh
+        run: |
+          $tag = $env:GITHUB_REF -replace '^refs/tags/', ''
+          if ($tag -eq $env:GITHUB_REF) { $tag = 'v0.9.8-paulhuman.local' }   # workflow_dispatch fallback
+          $cmake = Get-Content CMakeLists.txt -Raw
+          $base = [regex]::Match($cmake, 'project\([^)]*VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+          if (-not $base) { throw "could not parse project version" }
+          $suffix = ''
+          if ($tag.StartsWith("v$base")) { $suffix = $tag.Substring(("v$base").Length) }
+          "version_tag=$tag"     | Out-File $env:GITHUB_OUTPUT -Append
+          "suffix=$suffix"       | Out-File $env:GITHUB_OUTPUT -Append
+          "asset_name=MS2000R-$tag-win64.zip" | Out-File $env:GITHUB_OUTPUT -Append
+
+      - name: Configure (VS2022, VST3, fork version suffix)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DMS2K_BUILD_VST3=ON -DCMAKE_BUILD_TYPE=Release -DMS2K_VERSION_SUFFIX=${{ steps.meta.outputs.suffix }}
+
+      - name: Build shim (produces VST3_multi bundle)
+        run: cmake --build build --config Release --target MS2000R_Shim --parallel
+
+      - name: Verify bundle + version string
+        shell: pwsh
+        run: |
+          $bundle = 'build/VST3_multi/MS2000R.vst3'
+          $exe = "$bundle/Contents/x86_64-win/MS2000R.vst3"
+          $engine = "$bundle/Contents/Resources/MS2000R_engine.dll"
+          if (-not (Test-Path $exe)) { throw "bundle loader missing: $exe" }
+          if (-not (Test-Path $engine)) { throw "bundle engine missing: $engine" }
+          $expected = "0.9.8${{ steps.meta.outputs.suffix }}"
+          $txt = [System.Text.Encoding]::Latin1.GetString([System.IO.File]::ReadAllBytes((Resolve-Path $engine)))
+          if (-not $txt.Contains($expected)) { throw "engine does not contain version '$expected'" }
+          Write-Host "OK: engine contains '$expected'"
+
+      - name: Package VST3 bundle
+        shell: pwsh
+        run: |
+          $src = 'build/VST3_multi/MS2000R.vst3'
+          $zip = "dist/${{ steps.meta.outputs.asset_name }}"
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path $src -DestinationPath $zip
+          Get-Item $zip | Select-Object FullName, Length
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: vst3-win64
+          path: dist/*.zip
+
+  release:
+    name: Create GitHub Release
+    needs: build-windows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vst3-win64
+          path: dist
+
+      - name: Attach assets to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build-windows.outputs.version_tag }}
+          files: dist/*.zip
+          generate_release_notes: true
