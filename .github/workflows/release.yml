@@ -96,10 +96,14 @@ jobs:
           base='${{ needs.build-windows.outputs.base }}'
           tag='${{ needs.build-windows.outputs.version_tag }}'
           ver="${tag#v}"
-          sed -e "s/__VER__/${ver}/g" \
-              -e "s/__BASE__/${base}/g" \
-              -e "s/__DATE__/$(date +%F)/g" \
-              .github/workflows/release-notes.template.md > release-notes.md
+          if [ -f "release-notes/${tag}.md" ]; then
+            cp "release-notes/${tag}.md" release-notes.md
+          else
+            sed -e "s/__VER__/${ver}/g" \
+                -e "s/__BASE__/${base}/g" \
+                -e "s/__DATE__/$(date +%F)/g" \
+                .github/workflows/release-notes.template.md > release-notes.md
+          fi
 
       - uses: actions/download-artifact@v8
         with:

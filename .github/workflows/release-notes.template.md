@@ -6,15 +6,14 @@
 
 **Upstream:** [Tuth/ms2000r-emu v__BASE__](https://github.com/Tuth/ms2000r-emu).
 
-## Изменения относительно upstream v__BASE__
+## Изменения с версии …
 
-- **Исправлено сохранение состояния плагина** — состояние плагина корректно сохраняется и восстанавливается при работе с проектами DAW (PR #8).
-- **Исправлено соотношение сторон окна редактора** — окно сохраняет правильные пропорции при изменении размеров (PR #11).
-- **Добавлена настройка `Report latency to host`** — позволяет управлять передачей информации о задержке плагина хосту (PR #12).
+<!-- TODO: заполнить список изменений этого релиза (дельта от предыдущего).
+     Желательно две секции: «Для пользователей» и «Для разработчиков». -->
 
 ## Соглашения форка
 
-- Для обозначения собственных сборок используется суффикс версии `-paulhuman.<n>` (например, `v__BASE__-paulhuman.1`).
+- Для обозначения собственных сборок используется суффикс версии `-paulhuman.<n>` (например, `v__BASE__-paulhuman.2`).
 - VST3 bundle поставляется в виде каталога `MS2000R.vst3/`.
 - Сборка и упаковка выполняются автоматически с помощью GitHub Actions.
 
@@ -34,15 +33,14 @@ Fork of the Korg MS2000R emulator based on upstream version v__BASE__.
 
 **Upstream:** [Tuth/ms2000r-emu v__BASE__](https://github.com/Tuth/ms2000r-emu).
 
-## Changes vs upstream v__BASE__
+## Changes since …
 
-- **Plugin state saving fixed** — plugin state now saves and restores correctly when working with DAW projects (PR #8).
-- **Editor window aspect ratio fixed** — the window keeps correct proportions when resized (PR #11).
-- **Added `Report latency to host` setting** — controls whether latency information is reported to the host (PR #12).
+<!-- TODO: fill in the changes of this release (delta from the previous one).
+     Prefer two sections: "For users" and "For developers". -->
 
 ## Fork conventions
 
-- Own builds are marked with a `-paulhuman.<n>` version suffix (e.g. `v__BASE__-paulhuman.1`).
+- Own builds are marked with a `-paulhuman.<n>` version suffix (e.g. `v__BASE__-paulhuman.2`).
 - The VST3 bundle ships as a `MS2000R.vst3/` directory.
 - Builds and packaging are automated via GitHub Actions.
 
