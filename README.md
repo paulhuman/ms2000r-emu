@@ -7,20 +7,36 @@ comes from the machine's own code.
 
 Standalone application (Windows and macOS, ImGui) with the full MS2000R front panel, and a VST3 instrument plugin (JUCE; on macOS also an Audio Unit).
 
-## Changes in this fork
+## Selected changes in this fork
 
-This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) plus the following changes: the upstream PRs merged into this fork, and fork-specific changes on top of them (each marked as such):
+This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) and includes the following selected changes:
 
-- **Knobs reflect the loaded program by default** (fork change, v0.9.8-paulhuman.2): opening a project or loading a program
-  now moves the knobs straight to that program's values, instead of keeping their last positions. If you prefer the old
-  behaviour, turn off the `Knobs show the program` setting in the plugin's Settings (or the standalone checkbox).
-- **Report the synth's latency to the host** (upstream PR #12): an optional `Report latency to host` setting in the plugin's
-  Settings page reports the ~21 ms firmware latency (host sample-accurate delay compensation).
-- **Editor window keeps the panel's aspect ratio** (upstream PR #11): resizing the editor preserves the panel's proportions
-  (700×380 … 3840×2160) instead of distorting it.
-- **Plugin state recall in host projects** (upstream PR #8): the project now saves and restores the live edit buffer and its
-  program slot, the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys, so a DAW session recalls the
-  audible program as on the hardware unit.
+- **Knobs reflect the loaded program by default**
+  (fork change, introduced in [v0.9.8-paulhuman.2](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.2)):
+  opening a project or loading a program now moves the knobs straight to that program's values,
+  instead of keeping their last positions. If you prefer the old behaviour, turn off the
+  `Knobs show the program` setting in the plugin's Settings (or the standalone checkbox).
+
+- **Report the synth's latency to the host**
+  (upstream PR [#12](https://github.com/Tuth/ms2000r-emu/pull/12),
+  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  an optional `Report latency to host` setting in the plugin's Settings page reports the
+  ~21 ms firmware latency (host sample-accurate delay compensation).
+
+- **Editor window keeps the panel's aspect ratio**
+  (upstream PR [#11](https://github.com/Tuth/ms2000r-emu/pull/11),
+  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  resizing the editor preserves the panel's proportions (700×380 … 3840×2160)
+  instead of distorting it.
+
+- **Plugin state recall in host projects**
+  (upstream PR [#8](https://github.com/Tuth/ms2000r-emu/pull/8),
+  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  the project now saves and restores the live edit buffer and its program slot,
+  the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys,
+  so a DAW session recalls the audible program as on the hardware unit.
+
+For the complete release history, see [GitHub Releases](https://github.com/paulhuman/ms2000r-emu/releases).
 
 ## Status
 
