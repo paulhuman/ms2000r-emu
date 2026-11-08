@@ -9,7 +9,7 @@ Standalone application (Windows and macOS, ImGui) with the full MS2000R front pa
 
 ## Changes in this fork
 
-This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) plus the following merged changes (all also available as upstream PRs):
+This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) plus the following changes: the upstream PRs merged into this fork, and fork-specific changes on top of them (each marked as such):
 
 - **Plugin state recall in host projects** (upstream PR #8): the project now saves and restores the live edit buffer and its
   program slot, the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys, so a DAW session recalls the
@@ -18,6 +18,9 @@ This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) plus the following merged 
   (700×380 … 3840×2160) instead of distorting it.
 - **Report the synth's latency to the host** (upstream PR #12): an optional `Report latency to host` setting in the plugin's
   Settings page reports the ~21 ms firmware latency (host sample-accurate delay compensation).
+- **Knobs reflect the loaded program by default** (fork change, v0.9.8-paulhuman.2): opening a project or loading a program
+  now moves the knobs straight to that program's values, instead of keeping their last positions. If you prefer the old
+  behaviour, turn off the `Knobs show the program` setting in the plugin's Settings (or the standalone checkbox).
 
 ## Status
 
