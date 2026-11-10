@@ -18,6 +18,12 @@ Standalone application (Windows and macOS, ImGui) with the full MS2000R front pa
 
 This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.9) and includes the following selected changes:
 
+- **Upstream base v0.9.9**
+  (included in [v0.9.9-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.9-paulhuman.1)):
+  the fork now tracks upstream v0.9.9, which brings a profile-guided (PGO) build
+  (the standalone is ~14% faster, the plugin uses ~7% less CPU, audio is bit-identical)
+  and a real dot-matrix LCD that stays crisp at any window size.
+
 - **Knobs reflect the loaded program by default**
   (fork change, introduced in [v0.9.8-paulhuman.2](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.2)):
   opening a project or loading a program now moves the knobs straight to that program's values,
@@ -42,12 +48,6 @@ This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.9) and includes the following
   the project now saves and restores the live edit buffer and its program slot,
   the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys,
   so a DAW session recalls the audible program as on the hardware unit.
-
-- **Upstream base v0.9.9**
-  (included in [v0.9.9-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.9-paulhuman.1)):
-  the fork now tracks upstream v0.9.9, which brings a profile-guided (PGO) build
-  (the standalone is ~14% faster, the plugin uses ~7% less CPU, audio is bit-identical)
-  and a real dot-matrix LCD that stays crisp at any window size.
 
 For the complete release history, see [GitHub Releases](https://github.com/paulhuman/ms2000r-emu/releases).
 
