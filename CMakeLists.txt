@@ -20,7 +20,13 @@ if(APPLE)
     set(CMAKE_OBJCXX_VISIBILITY_PRESET hidden)
     set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
-add_compile_definitions(MS2K_VERSION="${PROJECT_VERSION}")   # PUBLIC-1b: shown in the GUI title and the plugin
+# PUBLIC-1b: MS2K_VERSION is shown in the GUI title and the plugin. PROJECT_VERSION is numeric (CMake requires it),
+# so a fork release brands its build via an optional suffix, e.g. -DMS2K_VERSION_SUFFIX=-paulhuman.1 ->
+# "0.9.8-paulhuman.1". Empty by default = a plain upstream build.
+if(NOT DEFINED MS2K_VERSION_SUFFIX)
+    set(MS2K_VERSION_SUFFIX "")
+endif()
+add_compile_definitions(MS2K_VERSION="${PROJECT_VERSION}${MS2K_VERSION_SUFFIX}")
 
 # Enable testing support for CTest
 enable_testing()

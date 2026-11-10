@@ -54,9 +54,13 @@ public:
     int editorW = 0, editorTab = 0;                      // the editor's last width and page
     std::atomic<bool> hostClock{ true };                 // MIDI-CLOCK: the host tempo as F8 clocks into MIDI IN
     std::atomic<bool> dspThread{ false };                // DSP-THREAD: the DSP on a second core (from the next start)
-    std::atomic<bool> knobFollow{ false };               // KNOB-FOLLOW: the pots show the program (off = where you left them)
+    std::atomic<bool> knobFollow{ true };                // KNOB-FOLLOW: the pots show the program (off = where you left them)
+                                                         // default ON on purpose: showing the preset is friendlier than hardware-style
+                                                         // "you left it" positions; users can turn it off in Settings.
     std::atomic<bool> sysexOut{ true };                  // VSTHOST-SYSEX-1: hand the firmware's SysEx OUT to the host
     std::atomic<bool> powerSwitch{ true };               // PWR-SW-1: the Master VR's switch - POWER off at the minimum
+    std::atomic<bool> latencyReport{ true };             // Settings: report the synth's latency to the host
+    void applyLatency();                                 // setLatencySamples + tell the host
     std::atomic<int> boostDb{ 0 };                       // OUT-BOOST-1: master output boost after the pot, 0..12 dB
     std::atomic<bool> transportMsgs{ true };             // MIDI-CLOCK b: Start (on a quarter) / Stop with the host transport
     juce::String libraryPath;                            // LIBRARY-1: the .syx the Library page shows
@@ -91,6 +95,7 @@ private:
     void timerCallback() override;           // SYX-1: drives m_syx (message thread)
     MS2000::SyxTool m_syx;
     std::atomic<uint64_t> m_frames{ 0 };
+    std::atomic<uint64_t> m_machineStartFrame{ 0 };
     std::atomic<uint64_t> m_blocks{ 0 };                 // HOSTDIAG-1: processBlock calls (incl. the silent ones)
     int m_hostDiagTick = 0;
     // HOSTDIAG-1: MIDI OUT seen by the host, recorded on the audio thread, printed by the timer (no OutputDebugString
@@ -112,6 +117,10 @@ private:
     void stopMachine();
     void applyPanel();                       // knobs + input stage + DAC into a running machine
     void clearStreams();                     // the audio/MIDI queues of a stopped machine
+    void restoreProjectEditBuffer();         // message thread: load the saved live program after firmware boot
+    void restoreProjectAudioInThru();        // message thread: restore the power-on-only AudioInThru option
+    void restoreProjectScreen();             // message thread: replay saved safe LCD navigation keys
+    void rememberScreenKey(unsigned col, unsigned row);
     // PWR-SW-1: the Master VR at its minimum switches the machine off (flash kept, as on the unit), turning it up
     // powers it on again - with the keys the panel holds (LATCH) down during the boot. Settings can disable it.
     bool powerSwitchOpen() const { return powerSwitch.load() && volume <= 0.001f; }
@@ -141,6 +150,24 @@ private:
     bool m_haveProjectFlash = false;
     uint32_t m_projectMask = 0;
     std::vector<uint8_t> m_projectImage;
+    std::mutex m_editBufferMx;
+    std::vector<uint8_t> m_projectEditBuffer;
+    int m_projectProgram = -1;
+    bool m_restoreEditPending = false;
+    bool m_restoreEditActive = false;
+    std::mutex m_globalDataMx;
+    std::vector<uint8_t> m_projectGlobalData;
+    bool m_projectAudioInThru = false;
+    size_t m_restoreAudioInThruIndex = 0;
+    bool m_restoreAudioInThruPending = false;
+    bool m_restoreAudioInThruDown = false;
+    int m_restoreAudioInThruDelay = 0;
+    std::mutex m_screenMx;
+    std::vector<uint8_t> m_screenKeys;        // column,row pairs from the current program's main screen
+    size_t m_restoreScreenIndex = 0;
+    bool m_restoreScreenPending = false;
+    bool m_restoreScreenDown = false;
+    int m_restoreScreenDelay = 0;
 
     // 48 kHz (the DSP's fs) -> host rate
     std::vector<float> m_srcL, m_srcR;      // rendered, not yet consumed source frames

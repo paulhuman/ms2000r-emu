@@ -1,4 +1,11 @@
-# ms2000r-emu  (v0.9.9)
+# ms2000r-emu (v0.9.9)
+
+[![KORG MS2000R](https://img.shields.io/badge/KORG-MS2000R-black?logo=audio&logoColor=white&style=flat-square)](https://github.com/paulhuman/ms2000r-emu)
+[![Windows](https://img.shields.io/badge/platform-Windows%20x64-informational?logo=windows&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/paulhuman/ms2000r-emu/ci.yml?label=ci&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/actions)
+[![Release](https://img.shields.io/github/v/release/paulhuman/ms2000r-emu?include_prereleases&label=release&color=orange&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/releases)
+[![Downloads](https://img.shields.io/github/downloads/paulhuman/ms2000r-emu/total?color=yellow&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/releases)
+[![License](https://img.shields.io/github/license/paulhuman/ms2000r-emu?color=lightgray&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/blob/main/LICENSE.md)
 
 A hardware-level emulator of the **KORG MS2000R** (rack version of the MS2000 analog-modeling synthesizer):
 the H8S/2350 main CPU runs the original firmware instruction by instruction, and the DSP56362 runs the
@@ -6,6 +13,37 @@ original DSP code on the dsp56300 emulator library. Nothing of the synth engine 
 comes from the machine's own code.
 
 Standalone application (Windows and macOS, ImGui) with the full MS2000R front panel, and a VST3 instrument plugin (JUCE; on macOS also an Audio Unit).
+
+## Selected changes in this fork
+
+This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.9) and includes the following selected changes:
+
+- **Knobs reflect the loaded program by default**
+  (fork change, introduced in [v0.9.8-paulhuman.2](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.2)):
+  opening a project or loading a program now moves the knobs straight to that program's values,
+  instead of keeping their last positions. If you prefer the old behaviour, turn off the
+  `Knobs show the program` setting in the plugin's Settings (or the standalone checkbox).
+
+- **Report the synth's latency to the host**
+  (upstream PR [#12](https://github.com/Tuth/ms2000r-emu/pull/12),
+  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  an optional `Report latency to host` setting in the plugin's Settings page reports the
+  ~21 ms firmware latency (host sample-accurate delay compensation).
+
+- **Editor window keeps the panel's aspect ratio**
+  (upstream PR [#11](https://github.com/Tuth/ms2000r-emu/pull/11),
+  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  resizing the editor preserves the panel's proportions (700×380 … 3840×2160)
+  instead of distorting it.
+
+- **Plugin state recall in host projects**
+  (upstream PR [#8](https://github.com/Tuth/ms2000r-emu/pull/8),
+  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  the project now saves and restores the live edit buffer and its program slot,
+  the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys,
+  so a DAW session recalls the audible program as on the hardware unit.
+
+For the complete release history, see [GitHub Releases](https://github.com/paulhuman/ms2000r-emu/releases).
 
 ## Status
 
@@ -25,7 +63,7 @@ Standalone application (Windows and macOS, ImGui) with the full MS2000R front pa
   firmware reads it and sends its own CCs as on the unit; the plugin never makes MIDI from a parameter, and nothing
   the machine does moves a parameter (the pots are not motorised) - so automation and MIDI CC tracks never fight.
   Mouse moves on the panel are recorded in Write/Touch mode.
-- **MS2000 Flash Tool** (Windows, in the release zip): reads the complete 1 MB flash of your own MS2000 / MS2000R over
+- **MS2000 Flash Tool** (Windows, in the upstream release zip): reads the complete 1 MB flash of your own MS2000 / MS2000R over
   MIDI - the `flash.bin` this emulator needs - with unknown-technologies' flash dump, installed through the unit's own
   update mode from KORG's v1.07 updater file. **Never with an MS2000B / MS2000BR.** See
   [source/tools/flashdump/README.md](source/tools/flashdump/README.md) and [docs/ipl_protocol.md](docs/ipl_protocol.md).
@@ -51,11 +89,13 @@ Next: a preset library page.
 
 ## Download
 
-Windows builds are on the [Releases](../../releases) page: `ms2000_emulator.exe` with its two launchers and the
-`MS2000R.vst3` plugin. Put your ROM files (below) beside the exe, or in a folder above it, and start
-`MS2000R.bat` (or `MS2000R (log).bat` to get `ms2000_gui.log` for a bug report). Copy `MS2000R.vst3` to your
-VST3 folder (usually `C:\Program Files\Common Files\VST3`); on its first start open Settings -> "Choose the
-MS2000 folder..." and pick the folder with the ROMs (remembered in `%APPDATA%\MS2000R\home.txt`). The Microsoft Visual C++ 2015-2022 x64 runtime is needed.
+This fork's [Releases](../../releases) ship the **VST3 plugin bundle** (`MS2000R-v<version>-win64.zip`). Unzip it,
+copy the `MS2000R.vst3` folder into your VST3 directory (usually `C:\Program Files\Common Files\VST3`), and on its
+first start open Settings -> "Choose the MS2000 folder..." and pick the folder with the ROMs (remembered in
+`%APPDATA%\MS2000R\home.txt`). The Microsoft Visual C++ 2015-2022 x64 runtime is needed.
+
+The **standalone application** is not shipped in this fork's releases — build it from source (see Build below), or
+grab the official Windows/macOS builds from upstream [`Tuth/ms2000r-emu`](https://github.com/Tuth/ms2000r-emu).
 
 ## What you need - NOT included
 
@@ -65,14 +105,13 @@ The working folder is found by itself: `MS2K_HOME` if set, else the current fold
 else the exe's (or the plugin's) folder or the first folder above it that holds them. Settings (`thin_gui.ini`), the
 machine's memory and `recordings\` are kept there.
 
-| file (in the working folder) | what | required |
-|---|---|---|
-| `flash.bin` | the MS2000R main flash (1 MB, MBM29LV800BA) | yes |
-| `boot-362.bin` | the DSP56362 boot ROM (768 bytes = 192 words x 4, little endian), **beside `flash.bin` or in its `full FW` subfolder** (both work since v0.9.8); the widely shared dump works - its two known bad words are corrected in memory. A corrected `boot-362.ms2000.bin` is used first if present | yes (no sound without it) |
-| `hd44780_a00.bin` | the LCD controller's character generator ROM (4096 bytes), beside `flash.bin` or in `full FW` | no (the LCD falls back to text) |
+| file (in the working folder) | what                                                                                                                                                                                                                                                                                        | required                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `flash.bin`                  | the MS2000R main flash (1 MB, MBM29LV800BA)                                                                                                                                                                                                                                                 | yes                             |
+| `boot-362.bin`               | the DSP56362 boot ROM (768 bytes = 192 words x 4, little endian), **beside `flash.bin` or in its `full FW` subfolder** (both work since v0.9.8); the widely shared dump works - its two known bad words are corrected in memory. A corrected `boot-362.ms2000.bin` is used first if present | yes (no sound without it)       |
+| `hd44780_a00.bin`            | the LCD controller's character generator ROM (4096 bytes), beside `flash.bin` or in `full FW`                                                                                                                                                                                               | no (the LCD falls back to text) |
 
 If something is missing, the console / the plugin's panel names the missing file and the folder it looked in.
-The release zip has a `ROMS - READ ME.txt` with the same instructions.
 
 The emulator never writes `flash.bin`: what the firmware writes (WRITE) goes to `ms2000_flash_state.bin` /
 `.sectors` beside it (standalone) or into the host project (plugin).
