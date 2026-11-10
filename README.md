@@ -1,4 +1,4 @@
-# ms2000r-emu (v0.9.8)
+# ms2000r-emu (v0.9.9)
 
 [![KORG MS2000R](https://img.shields.io/badge/KORG-MS2000R-black?logo=audio&logoColor=white&style=flat-square)](https://github.com/paulhuman/ms2000r-emu)
 [![Windows](https://img.shields.io/badge/platform-Windows%20x64-informational?logo=windows&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/releases)
@@ -16,7 +16,7 @@ Standalone application (Windows and macOS, ImGui) with the full MS2000R front pa
 
 ## Selected changes in this fork
 
-This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) and includes the following selected changes:
+This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.9) and includes the following selected changes:
 
 - **Knobs reflect the loaded program by default**
   (fork change, introduced in [v0.9.8-paulhuman.2](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.2)):
@@ -42,6 +42,12 @@ This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.8) and includes the following
   the project now saves and restores the live edit buffer and its program slot,
   the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys,
   so a DAW session recalls the audible program as on the hardware unit.
+
+- **Upstream base v0.9.9**
+  (included in [v0.9.9-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.9-paulhuman.1)):
+  the fork now tracks upstream v0.9.9, which brings a profile-guided (PGO) build
+  (the standalone is ~14% faster, the plugin uses ~7% less CPU, audio is bit-identical)
+  and a real dot-matrix LCD that stays crisp at any window size.
 
 For the complete release history, see [GitHub Releases](https://github.com/paulhuman/ms2000r-emu/releases).
 
@@ -203,6 +209,17 @@ The finished plugin bundle is `build_vst\VST3_multi\MS2000R.vst3` (the loader mo
 
 The plugin looks for the folder holding `flash.bin` in `MS2K_HOME`, then `Documents\MS2000R`, then the folders
 above the plugin binary.
+
+Profile-guided build (what the release binaries are): with `build` and `build_vst` configured as above,
+
+```
+powershell -File tools\pgo_build.ps1 -RomDir <the folder with flash.bin and boot-362.bin>
+```
+
+builds both instrumented (`MS2K_PGO=GEN`), trains them on the emulated machine (headless runs and the plugin in
+`MS2000R_HostTest`), and rebuilds them with the profile (`MS2K_PGO=USE`): ~13 % faster standalone, ~9 % less
+plugin CPU, the same audio bit for bit. It needs the firmware for the training and takes ~15 minutes. The profile
+belongs to the exact sources it was trained on - set `-DMS2K_PGO=OFF` again for development builds.
 
 ## Credits
 
