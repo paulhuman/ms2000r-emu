@@ -52,7 +52,7 @@ jobs:
           $engine = "$bundle/Contents/Resources/MS2000R_engine.dll"
           if (-not (Test-Path $exe)) { throw "bundle loader missing: $exe" }
           if (-not (Test-Path $engine)) { throw "bundle engine missing: $engine" }
-          $expected = "0.9.8${{ steps.meta.outputs.suffix }}"
+          $expected = "${{ steps.meta.outputs.base }}${{ steps.meta.outputs.suffix }}"
           $txt = [System.Text.Encoding]::Latin1.GetString([System.IO.File]::ReadAllBytes((Resolve-Path $engine)))
           if (-not $txt.Contains($expected)) { throw "engine does not contain version '$expected'" }
           Write-Host "OK: engine contains '$expected'"
