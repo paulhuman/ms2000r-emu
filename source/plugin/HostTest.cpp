@@ -201,21 +201,22 @@ int main(int argc, char** argv)
         std::cerr << "latency " << inst->getLatencySamples() << " samples at " << rate << " Hz\n";
         juce::AudioBuffer<float> tmp(2, int(32 * rate)); int mo = 0;
         tmp.clear();
-        g_smf.emplace_back(int(3 * rate), juce::MidiMessage::programChange(1, 8));
-        play(*inst, tmp, 0, int(4 * rate), block, -1, -1, mo);
+        g_smf.emplace_back(int(6 * rate), juce::MidiMessage::programChange(1, 8));   // after the boot: the machine takes MIDI from about 4 s
+        play(*inst, tmp, 0, int(7 * rate), block, -1, -1, mo);
         g_smf.clear();
         auto seed = stateOf(*inst);
+        std::cout << "seed: edit " << editName(seed) << std::endl;
         const auto* savedGlobal = seed.getProperty("globalData").getBinaryData();
         if (!savedGlobal || savedGlobal->getSize() != 200) { std::cerr << "no live GLOBAL data\n"; return 9; }
         juce::MemoryBlock global(*savedGlobal);
-        static_cast<uint8_t*>(global.getData())[4] = 4;
+        static_cast<uint8_t*>(global.getData())[4] = 4; if (std::getenv("MS2K_TEST_SYSEX_ENA")) static_cast<uint8_t*>(global.getData())[16] |= 0x80;   // TABLE 6: SystemEx filter = Ena
         seed.setProperty("globalData", global, nullptr);
         seed.setProperty("audioInThru", true, nullptr);
         const uint8_t globalKeys[] = { 3, 6, 4, 6, 4, 6, 4, 6, 4, 6 };
         seed.setProperty("screenKeys", juce::MemoryBlock(globalKeys, sizeof globalKeys), nullptr);
         setState(*inst, seed);
         g_pump = true;
-        play(*inst, tmp, int(4 * rate), int(26 * rate), block, -1, -1, mo);
+        play(*inst, tmp, int(7 * rate), int(29 * rate), block, -1, -1, mo);
         g_pump = false;
         auto a = stateOf(*inst);
         a.setProperty("knobs", "100,200,300,400,500,600,700,800,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,512,1000", nullptr);

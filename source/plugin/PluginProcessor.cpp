@@ -35,6 +35,7 @@ constexpr size_t kProgramBytes = 254;
 constexpr uint32_t kGlobalBufferAddr = 0x403206u;
 constexpr uint32_t kGlobalFlashOffset = 0xA0010u;
 constexpr size_t kGlobalBytes = 200;
+constexpr size_t kGlobalSysExByte = 16;   // TABLE 6 GLOBAL PARAMETER: byte 16 bit 7 = SystemEx filter (0 Dis, 1 Ena)
 
 bool isSafeScreenKey(unsigned col, unsigned row)
 {
@@ -427,6 +428,7 @@ void Ms2kProcessor::powerSwitchPoll()
             global[i] = m_runner->getEmulator().peekExternal(kGlobalBufferAddr + uint32_t(i));
         {
             std::lock_guard<std::mutex> g(m_globalDataMx);
+            if (m_sysexForced) global[kGlobalSysExByte] &= 0x7Fu;   // STATE-RECALL-2
             m_projectGlobalData = std::move(global);
         }
         stopMachine();
@@ -513,8 +515,16 @@ bool Ms2kProcessor::startMachine()
         std::lock_guard<std::mutex> l(m_globalDataMx);
         if (m_projectGlobalData.size() == kGlobalBytes) {
             auto& flash = m_runner->getEmulator().getFlashROM();
-            if (flash.size() >= kGlobalFlashOffset + kGlobalBytes)
+            if (flash.size() >= kGlobalFlashOffset + kGlobalBytes) {
                 std::copy(m_projectGlobalData.begin(), m_projectGlobalData.end(), flash.data() + kGlobalFlashOffset);
+                // STATE-RECALL-2: the edit buffer goes back as a PROGRAM DATA DUMP, and the firmware takes Korg
+                // exclusive data only with GLOBAL SystemEx = Ena (MS2000 MIDI implementation; factory setting Dis -
+                // measured: Dis gives "No answer to the Device Inquiry" and the project's sound was lost).
+                bool recall = false;
+                { std::lock_guard<std::mutex> e(m_editBufferMx); recall = validEditBuffer(m_projectEditBuffer); }
+                m_sysexForced = recall && !(m_projectGlobalData[kGlobalSysExByte] & 0x80u);
+                if (m_sysexForced) flash.data()[kGlobalFlashOffset + kGlobalSysExByte] |= 0x80u;
+            }
         }
     }
     if (!m_runner->startManual()) {
@@ -530,7 +540,7 @@ bool Ms2kProcessor::startMachine()
     applyPanel();
     {
         std::lock_guard<std::mutex> l(m_editBufferMx);
-        if (validEditBuffer(m_projectEditBuffer)) m_restoreEditPending = true;
+        if (validEditBuffer(m_projectEditBuffer)) { m_restoreEditPending = true; m_restoreEditTries = 0; m_restoreEditNotBefore = 0; }
     }
     {
         std::lock_guard<std::mutex> l(m_globalDataMx);
@@ -552,20 +562,46 @@ bool Ms2kProcessor::startMachine()
     return true;
 }
 
+// STATE-RECALL-2: after the recall's dump the live GLOBAL data gets the project's own SystemEx = Dis back.
+void Ms2kProcessor::releaseForcedSysEx()
+{
+    std::lock_guard<std::mutex> g(m_globalDataMx);
+    if (!m_sysexForced) return;
+    m_sysexForced = false;
+    if (m_runner) {
+        auto& cpu = m_runner->getEmulator();
+        cpu.pokeExternal(kGlobalBufferAddr + uint32_t(kGlobalSysExByte), uint8_t(cpu.peekExternal(kGlobalBufferAddr + uint32_t(kGlobalSysExByte)) & 0x7Fu));
+    }
+}
+
 void Ms2kProcessor::restoreProjectEditBuffer()
 {
     std::vector<uint8_t> edit;
     int program = -1;
+    bool release = false;
     {
         std::lock_guard<std::mutex> l(m_editBufferMx);
-        if (m_restoreEditActive && !m_syx.busy()) {
+        if (m_restoreEditActive && !m_syx.busy()) { if (std::getenv("MS2K_STATEDIAG")) { std::printf("[STATE] edit buffer restore ended: %s\n", m_syx.status().c_str()); std::fflush(stdout); }   // R2 diagnostic, default off
             m_restoreEditActive = false;
-            m_restoreEditPending = false;
+            // STATE-RECALL-2: the first attempt goes out 3 s after the machine started, and the machine answers
+            // MIDI only from about 4 s (boot). An unanswered attempt used to drop the project's sound for good
+            // ("No answer to the Device Inquiry"). Now it stays pending and is sent again a second later, at most
+            // 15 times; an answer of the machine (loaded, or a load/format error) ends it as before.
+            const bool unanswered = m_syx.status().rfind("No answer", 0) == 0;
+            if (unanswered && ++m_restoreEditTries < 15)
+                m_restoreEditNotBefore = m_frames.load(std::memory_order_relaxed) + uint64_t(m_hostRate);
+            else
+                m_restoreEditPending = false;
+            if (!m_restoreEditPending) release = true;
         }
+        if (!release) {
         if (!m_restoreEditPending || m_restoreEditActive || m_syx.busy()) return;
+        if (m_frames.load(std::memory_order_relaxed) < m_restoreEditNotBefore) return;
         edit = m_projectEditBuffer;
         program = m_projectProgram;
+        }
     }
+    if (release) { releaseForcedSysEx(); return; }
     if (!m_runner || !validEditBuffer(edit)) return;
     const auto now = m_frames.load(std::memory_order_relaxed);
     const auto started = m_machineStartFrame.load(std::memory_order_relaxed);
@@ -665,6 +701,7 @@ void Ms2kProcessor::applyLatency()
     setLatencySamples(samples);
     updateHostDisplay(juce::AudioProcessorListener::ChangeDetails().withLatencyChanged(true));
 }
+
 
 void Ms2kProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
@@ -1126,6 +1163,7 @@ void Ms2kProcessor::getStateInformation(juce::MemoryBlock& dest)
         for (size_t i = 0; i < global.size(); ++i)
             global[i] = m_runner->getEmulator().peekExternal(kGlobalBufferAddr + uint32_t(i));
         if (!validGlobalData(global)) global.clear();
+        else { std::lock_guard<std::mutex> l(m_globalDataMx); if (m_sysexForced) global[kGlobalSysExByte] &= 0x7Fu; }   // STATE-RECALL-2
     }
     if (global.empty()) {
         std::lock_guard<std::mutex> l(m_globalDataMx);

@@ -117,6 +117,7 @@ private:
     void stopMachine();
     void applyPanel();                       // knobs + input stage + DAC into a running machine
     void clearStreams();                     // the audio/MIDI queues of a stopped machine
+    void releaseForcedSysEx();               // STATE-RECALL-2
     void restoreProjectEditBuffer();         // message thread: load the saved live program after firmware boot
     void restoreProjectAudioInThru();        // message thread: restore the power-on-only AudioInThru option
     void restoreProjectScreen();             // message thread: replay saved safe LCD navigation keys
@@ -155,8 +156,13 @@ private:
     int m_projectProgram = -1;
     bool m_restoreEditPending = false;
     bool m_restoreEditActive = false;
+    int  m_restoreEditTries = 0;                 // STATE-RECALL-2: unanswered attempts so far (the machine was still booting)
+    uint64_t m_restoreEditNotBefore = 0;         // host frame of the next attempt
     std::mutex m_globalDataMx;
     std::vector<uint8_t> m_projectGlobalData;
+    // STATE-RECALL-2: GLOBAL "SystemEx" filter (TABLE 6 byte 16 bit 7) is switched on for the recall's own data
+    // dump while the project has it off, and put back afterwards. Guarded by m_globalDataMx.
+    bool m_sysexForced = false;
     bool m_projectAudioInThru = false;
     size_t m_restoreAudioInThruIndex = 0;
     bool m_restoreAudioInThruPending = false;

@@ -1,4 +1,4 @@
-# ms2000r-emu (v0.9.9)
+# ms2000r-emu (v0.9.10)
 
 [![KORG MS2000R](https://img.shields.io/badge/KORG-MS2000R-black?logo=audio&logoColor=white&style=flat-square)](https://github.com/paulhuman/ms2000r-emu)
 [![Windows](https://img.shields.io/badge/platform-Windows%20x64-informational?logo=windows&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/releases)
@@ -16,7 +16,16 @@ Standalone application (Windows and macOS, ImGui) with the full MS2000R front pa
 
 ## Selected changes in this fork
 
-This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.9) and includes the following selected changes:
+This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.10) and includes the following selected changes:
+
+- **Upstream base v0.9.10**
+  (included in [v0.9.10-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.10-paulhuman.1)):
+  the fork now tracks upstream v0.9.10, which brings project state recall in DAWs
+  (a reopened project brings back the audible program, its live parameters, GLOBAL,
+  AudioInThru and the LCD page - upstream's own version, built on PR #8 and hardened by
+  two fixes: the recall waits for the machine to boot and repeats, and it works with
+  GLOBAL's `SystemEx` filter off)
+  and a trimmed A/D conversion tick (the plugin uses a little less CPU; audio is bit-identical).
 
 - **Upstream base v0.9.9**
   (included in [v0.9.9-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.9-paulhuman.1)):
@@ -43,9 +52,10 @@ This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.9) and includes the following
   instead of distorting it.
 
 - **Plugin state recall in host projects**
-  (upstream PR [#8](https://github.com/Tuth/ms2000r-emu/pull/8),
-  included in [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
-  the project now saves and restores the live edit buffer and its program slot,
+  (superseded by upstream v0.9.10, see above; the fork carried the original
+  upstream PR [#8](https://github.com/Tuth/ms2000r-emu/pull/8) in
+  [v0.9.8-paulhuman.1](https://github.com/paulhuman/ms2000r-emu/releases/tag/v0.9.8-paulhuman.1)):
+  the project saves and restores the live edit buffer and its program slot,
   the GLOBAL working buffer, the AudioInThru option and the LCD navigation keys,
   so a DAW session recalls the audible program as on the hardware unit.
 
