@@ -35,6 +35,10 @@
 - Служебные ветки (например, `ms2000r-native/hooks` с отладочными инструментами emulator-хуков) не публикуются и в `main` не сливаются.
 - Публикуется только `main` и теги на нём. Ветки с локальными экспериментами остаются локальными.
 
+### Сообщения коммитов
+
+Сообщения пишутся на английском языке, как в upstream и во всей истории форка, в формате Conventional Commits: `type(scope): description`. Полные правила — в [AGENTS.md](../AGENTS.md).
+
 ### Слияние новой версии upstream
 
 ```
@@ -144,6 +148,10 @@ The numeric VST3 version field comes from `project(... VERSION)` and carries no 
 - `main` is the published branch: fork changes on top of upstream.
 - Service branches (for example `ms2000r-native/hooks` with emulator debug hooks) are never published and never merged into `main`.
 - Only `main` and its tags are published. Branches with local experiments stay local.
+
+### Commit messages
+
+Commit messages are written in English, as upstream and the entire fork history do, in Conventional Commits form: `type(scope): description`. The full rules are in [AGENTS.md](../AGENTS.md).
 
 ### Merging a new upstream version
 
