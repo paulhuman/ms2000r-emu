@@ -60,6 +60,7 @@ This fork tracks upstream `Tuth/ms2000r-emu` (v0.9.10) and includes the followin
   so a DAW session recalls the audible program as on the hardware unit.
 
 For the complete release history, see [GitHub Releases](https://github.com/paulhuman/ms2000r-emu/releases).
+How fork versions, release notes and branches are organised is described in [docs/fork-conventions.md](docs/fork-conventions.md).
 
 ## Status
 
