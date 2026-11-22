@@ -8,15 +8,11 @@
 [![License](https://img.shields.io/github/license/paulhuman/ms2000r-emu?color=lightgray&style=flat-square)](https://github.com/paulhuman/ms2000r-emu/blob/main/LICENSE.md)
 
 > [!NOTE]
-> **Я сейчас делаю нативный порт MS2000R.** Это отдельный проект — `ms2000r-native`:
-> собственный DSP-движок, интерфейс на JUCE 9 + WebView2 + Vue 3, скины на TOML/CSS.
-> Эмулятор при этом продолжает работать как прежде: звук по-прежнему берётся из
-> оригинальной прошивки и DSP-кода.
+> **Я сейчас делаю нативный порт MS2000R.** Это отдельный проект: собственный DSP-движок,
+> интерфейс на JUCE 9 + WebView2 + Vue 3, скины на TOML/CSS.
 >
-> **I am building a native port of the MS2000R.** It is a separate project,
-> `ms2000r-native`, with its own DSP engine and a JUCE 9 + WebView2 + Vue 3 interface,
-> skinned with TOML/CSS. The emulator itself is unchanged: the sound still comes from
-> the original firmware and DSP code.
+> **I am building a native port of the MS2000R.** It is a separate project: its own DSP
+> engine and a JUCE 9 + WebView2 + Vue 3 interface, skinned with TOML/CSS.
 
 A hardware-level emulator of the **KORG MS2000R** (rack version of the MS2000 analog-modeling synthesizer):
 the H8S/2350 main CPU runs the original firmware instruction by instruction, and the DSP56362 runs the
