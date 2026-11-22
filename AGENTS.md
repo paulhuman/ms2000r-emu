@@ -43,6 +43,7 @@ and the fork's own commits; a Russian message breaks that.
 
 - Source code, comments, `README.md` and repository documentation are English.
 - `docs/fork-conventions.md` and release notes are bilingual (Russian and English).
+- The notice at the top of `README.md` is bilingual (Russian and English).
 
 ## Build
 
